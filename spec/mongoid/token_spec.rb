@@ -172,7 +172,7 @@ describe Mongoid::Token do
       let(:doc) { Doc.create(foo: "hello") }
       let(:dup_doc) { Doc.new }
       let(:exception) do
-        /E11000 duplicate key error index: mongoid_token_test.docs\.\$foo_1/
+        /E11000 duplicate key error collection: mongoid_token_test.docs/
       end
 
       it do
