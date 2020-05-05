@@ -1,0 +1,37 @@
+name: Testing
+on: ["push", "pull_request"]
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ["2.5.x", "2.6.x"]
+        mongodb-version: ["4.0", "4.2"]
+
+    steps:
+      - name: Start MongoDB v${{ matrix.mongodb-version }}
+        uses: supercharge/mongodb-github-action@1.2.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby ${{ matrix.ruby-version }}
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+
+      - name: Install Ruby dependencies
+        run: |
+          gem install bundler --force
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: Run tests
+        env:
+          RAILS_ENV: test
+        run: |
+          bundle exec rspec
