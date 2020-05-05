@@ -23,14 +23,18 @@ module Mongoid
       end
 
       private
+
       def alias_method_with_collision_resolution(method)
         handler = self
-        klass.send(:define_method, :"#{method.to_s}_with_#{handler.field_name}_safety") do |method_options = {}|
-          self.resolve_token_collisions handler do
-            with(:safe => true).send(:"#{method.to_s}_without_#{handler.field_name}_safety", method_options)
+        klass.send(:define_method, :"#{method}_with_#{handler.field_name}_safety") do |method_options = {}|
+          resolve_token_collisions handler do
+            send(:"#{method}_without_#{handler.field_name}_safety", method_options)
           end
         end
-        klass.alias_method_chain method.to_sym, :"#{handler.field_name}_safety"
+        # klass.alias_method_chain method.to_sym, :"#{handler.field_name}_safety"
+
+        klass.alias_method :"#{method}_without_#{handler.field_name}_safety", method.to_sym
+        klass.alias_method method.to_sym, :"#{method}_with_#{handler.field_name}_safety"
       end
     end
   end

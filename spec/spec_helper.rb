@@ -1,14 +1,11 @@
-require "codeclimate-test-reporter"
-CodeClimate::TestReporter.start
-
-$: << File.expand_path("../../lib", __FILE__)
+$: << File.expand_path('../../lib', __FILE__)
 
 require 'database_cleaner'
 require 'mongoid'
 require 'mongoid-rspec'
 require 'mongoid_token'
 
-ENV['MONGOID_ENV'] = "test"
+ENV['MONGOID_ENV'] = 'test'
 
 RSpec.configure do |config|
   Mongo::Logger.logger.level = Logger::ERROR
@@ -25,5 +22,5 @@ RSpec.configure do |config|
 end
 
 Mongoid.configure do |config|
-  config.connect_to("mongoid_token_test", {})
+  config.connect_to('mongoid_token_test', {})
 end

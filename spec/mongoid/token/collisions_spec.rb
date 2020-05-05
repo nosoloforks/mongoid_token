@@ -85,16 +85,11 @@ describe Mongoid::Token::Collisions do
       it "should return true" do
         document.stub("token").and_return("tokenvalue123")
         err = double("Mongo::Error::OperationFailure")
-        err.stub("details").and_return do
-          {
-            "err" => "E11000 duplicate key error index: mongoid_token_test.links.$token_1  dup key: { : \"tokenvalue123\" }",
-            "code" => 11000,
-            "n" => 0,
-            "connectionId" => 130,
-            "ok" => 1.0
-          }
-          document.is_duplicate_token_error?(err, document, :token)
-        end
+        err.stub("message").and_return(
+          "E11000 duplicate key error index: mongoid_token_test.links.$token_1  dup key: { : \"tokenvalue123\" }"
+        )
+
+        expect(document.is_duplicate_token_error?(err, document, :token)).to be_truthy
       end
     end
   end
